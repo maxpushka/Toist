@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<title>Toist</title>
+
+	<link rel="stylesheet" href="lib/tau/wearable/theme/changeable/tau.css" />
+	<link rel="stylesheet" href="lib/tau/wearable/theme/changeable/tau.circle.css" media="all and (-tizen-geometric-shape: circle)" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.circle.css" />
+	<link rel="stylesheet" href="css/app-style.css" />
+
+  <script src="js/sys/circle-helper.js"></script>
+	<script src="lib/tau/wearable/js/tau.js"></script>
+</head>
+
+<body>
+	<div class="ui-page" id="main" data-go-to-top-button="true">
+
+		<header class="ui-header">
+			<h2 class="ui-title ui-overflow-gradient">Inbox</h2>
+		</header>
+
+		<div id="failed-update" class="ui-popup ui-popup-toast ui-popup-toast-small ui-popup-toast-graphic">
+			<div class="ui-popup-content">
+				<div class="ui-popup-toast-icon ui-popup-toast-check-icon"></div>
+				<span>Failed to update</span>
+			</div>
+		</div>
+
+		<div class="ui-content ui-content-padding" id="content">
+			<ul class="ui-listview ui-virtuallistview" id="chat-vlist"></ul>
+		</div>
+
+	</div>
+
+	<script>
+		window.pageId = "main";
+		window.listId = "inbox";
+		window.templateId = "inbox-item";
+		window.itemClass = ["ui-li-grid"];
+	</script>
+
+	<!-- app script -->
+  <script src="js/vlist.js"></script>
+  <script src="js/app.js"></script>
+	<!-- system scripts -->
+	<script src="js/sys/back-key.js"></script>
+	<script src="js/sys/low-battery-check.js"></script>
+</body>
+
+</html>
