@@ -5,7 +5,7 @@
     <feature name="http://tizen.org/feature/screen.size.normal"/>
     <feature name="http://tizen.org/feature/network.internet"/>
     <icon src="icon.png"/>
-    <name xml:lang="en-gb">English</name>
+    <name xml:lang="en-gb">Toist</name>
     <name>Toist</name>
     <tizen:privilege name="http://tizen.org/privilege/internet"/>
     <tizen:profile name="wearable"/>

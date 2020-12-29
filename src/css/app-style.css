@@ -1,0 +1,61 @@
+/* #ff7066 p1 */
+/* #ff9a14 p2 */
+/* #5297ff p3 */
+/* grey    p4 */
+
+.checkbox[type="checkbox"] {
+  background-image: url('img/radio_button_unchecked-white-48dp.svg') !important;
+  right: 16.875rem !important;
+}
+
+/* checked */
+.checkbox[type="checkbox"]:checked {
+  background-image: url('img/check_circle_outline-white-48dp.svg') !important;
+  background-color: inherit;
+  -webkit-mask-image: url('img/check_circle_outline-white-48dp.svg') !important;
+  mask-image: url('img/check_circle_outline-white-48dp.svg') !important;
+}
+
+/* .checkbox[type="checkbox"]::before {
+  background-image: url('img/check_circle_outline-white-48dp.svg') !important;
+  mask-image: url('img/check_circle_outline-white-48dp.svg') !important;
+} */
+
+/* unchecked */
+.checkbox[type="checkbox"]::after {
+  background-image: url('img/radio_button_unchecked-white-48dp.svg') no-repeat !important;
+  -webkit-mask-image: url('img/radio_button_unchecked-white-48dp.svg') !important;
+  mask-image: url('img/radio_button_unchecked-white-48dp.svg') no-repeat !important;
+}
+input[type="checkbox"]:not(.ui-switch-input)::after {
+  -webkit-mask-image: url('img/radio_button_unchecked-white-48dp.svg') !important;
+  mask-image: url('img/radio_button_unchecked-white-48dp.svg') no-repeat !important;
+}
+
+
+/* input[type="checkbox"]:not(.ui-switch-input) {background-image: none;} */
+
+/* default uncheck animation override (reset circle around the checkbox) */
+input[type="checkbox"]:not(.ui-switch-input)::before {background: inherit;}
+
+/* default on-click animation override (checkbox fills with color) */
+input[type="checkbox"]:not(.ui-switch-input):checked::after {background-color: #ff7066;}
+
+.checkbox-descr {
+  display: flex !important;
+  text-align: left !important;
+  width: 60% !important; 
+  position: relative !important; 
+  right: -2rem !important;
+  padding: 2rem 0.5rem 2.25rem 1rem !important;
+}
+
+.checkbox-descr .item-content {
+  overflow-wrap: break-word !important; 
+  font-size: 2rem !important;
+  height: 2.5rem !important;
+}
+
+.checkbox-descr .due {
+  color: #ff7066 !important;
+}

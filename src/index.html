@@ -16,10 +16,10 @@
 </head>
 
 <body>
-	<div class="ui-page" id="main" data-go-to-top-button="true">
+	<div id="main" class="ui-page">
 
 		<header class="ui-header">
-			<h2 class="ui-title ui-overflow-gradient">Inbox</h2>
+			<h2 id="folder-name" class="ui-title ui-overflow-gradient">Inbox</h2>
 		</header>
 
 		<div id="failed-update" class="ui-popup ui-popup-toast ui-popup-toast-small ui-popup-toast-graphic">
@@ -29,16 +29,26 @@
 			</div>
 		</div>
 
-		<div class="ui-content ui-content-padding" id="content">
-			<ul class="ui-listview ui-virtuallistview" id="chat-vlist"></ul>
+		<div id="content" class="ui-content ui-content-padding">
+			<ul id="todolist" class="ui-listview ui-virtuallistview">
+
+				<li class="ui-li-grid li-has-multiline li-has-checkbox" >
+					<input class="checkbox" type="checkbox" checked />
+					<a class="checkbox-descr">
+						<span class="ui-marquee item-content">Check on Check on Check on Check on Check on Check on Check on Check on Check on Check on Check on Check on</span>
+						<span class="ui-li-sub-text due">due to</span>
+					</a>
+				</li>
+
+			</ul>
 		</div>
 
 	</div>
 
 	<script>
 		window.pageId = "main";
-		window.listId = "inbox";
-		window.templateId = "inbox-item";
+		window.listId = "todolist";
+		window.templateId = "todolist-item";
 		window.itemClass = ["ui-li-grid"];
 	</script>
 
