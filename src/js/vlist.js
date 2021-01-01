@@ -6,15 +6,12 @@
 	const pagesList = document.getElementsByClassName("ui-page");
 	Array.from(pagesList).forEach( (page) => {
 
-		console.log(page.id);
-		console.log(page.dataset.listId);
-		console.log(page.dataset.templateId);
-		console.log(page.dataset.itemClass);
+		console.log(page.id, page.dataset.listId, page.dataset.templateId, page.dataset.itemClass);
 
 		let pageId = page.id,
 			listElement = document.getElementById(page.dataset.listId),
 			templateId = page.dataset.templateId,
-			itemClass = page.dataset.itemClass.parse(),
+			itemClass = JSON.parse(page.dataset.itemClass),
 			virtualListWidget,
 			listHelper;
 
