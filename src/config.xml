@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="https://github.com/maxpushka/Toist" version="1.0.0" viewmodes="fullscreen">
+    <access origin="https://api.todoist.com/sync/v8" subdomains="true"></access>
+    <access origin="*" subdomains="true"></access>
     <tizen:application id="37bSUG9j5M.Toist" package="37bSUG9j5M" required_version="5.5"/>
     <content src="index.html"/>
     <feature name="http://tizen.org/feature/screen.size.normal"/>
@@ -9,5 +11,5 @@
     <name>Toist</name>
     <tizen:privilege name="http://tizen.org/privilege/internet"/>
     <tizen:profile name="wearable"/>
-    <tizen:setting hwkey-event="enable"/>
+    <tizen:setting background-support="disable" encryption="disable" hwkey-event="enable"/>
 </widget>

@@ -10,16 +10,16 @@
   /* margin: 0 -0.5rem 0 -1rem !important; */
   /* padding: 1.25rem 0.5rem 1.25rem 1rem !important; */
 }
-
 .checkbox-descr .item-content {
   overflow-wrap: break-word !important; 
   font-size: 2rem !important;
   height: 2.4375rem !important;
 }
+.checkbox-descr .overdue {color: #ff7066 !important;}
+.checkbox-descr .today {color: #25b84c !important;}
+.checkbox-descr .tomorrow {color: #ff9a14 !important;}
+.checkbox-descr .next-week {color: #a970ff !important;}
 
-.checkbox-descr .due {color: #ff7066 !important;}
-
-/*****************************************************************************/
 
 /* remove default blue background on 'done' button */
 .ui-btn:enabled:focus {background-color: transparent !important;}
@@ -31,8 +31,30 @@
 }
 
 .calendar_icon {margin: 0 2px -3px 0 !important;}
+.recurring_icon {margin: 0 0 -3px 2px !important;}
 
 .p4 {fill: #ff7066;}
 .p3 {fill: #ff9a14;}
 .p2 {fill: #5297ff;}
 .p1 {fill: grey;}
+
+/*****************************************************************************/
+/* SECTION CHANGER */
+
+.ui-content section {
+	overflow: hidden;
+	overflow-y: hidden; /* auto */
+}
+
+.ui-content section h3 {
+	position: relative;
+	top: 100px;
+}
+
+/*****************************************************************************/
+
+.footer-projects-btn {
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  /* top: 30px !important; */
+}
