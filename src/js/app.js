@@ -8,7 +8,7 @@ function update(type) {
   const fetchURL = `${BASE_URL}?token=${TOKEN}&${type}`;
 
 	/* Create processing element */
-	let page = document.getElementById(pageId);
+	let page = document.getElementsByTagName("body")[0];
 	let processingEl = document.createElement("div");
 	processingEl.setAttribute("class", "ui-processing ui-processing-full-size");
   processingEl.setAttribute("id", "processing");
@@ -31,7 +31,7 @@ function update(type) {
       const todolist_items = JSON.parse(localStorage.getItem("items")); // string from local storage -> json
       const inbox = todolist_items.filter(i => i.project_id == "2251947170"); // Inbox
       console.log("inbox: ", inbox);
-      page.dispatchEvent( new CustomEvent("draw-vlist", {detail: {"JSON_DATA": inbox}}) );
+      page.dispatchEvent( new CustomEvent("draw-vlist-main", {detail: {"pageId": "main", "JSON_DATA": inbox}}) );
     })
     .catch( error => {
       console.log("Error: " + String(error));
