@@ -33,7 +33,7 @@
     </div>
 
     <div class="ui-content ui-content-padding">
-      <ul id="todolist" class="ui-listview ui-virtuallistview"></ul>
+      <ul id="todolist" class="ui-listview ui-virtuallistview"><li></li></ul>
     </div>
 
     <footer class="ui-footer footer-container ui-grid-col-2 ui-bottom-button" style="display: flex">
@@ -50,9 +50,12 @@
   <div id="projects-page" class="ui-page"
     data-list-id="projects-list" 
     data-template-id="projects-item"
-    data-item-class='["ui-li-grid"]'>
+    data-item-class='[]'>
 
-    <ul id="projects-list" class="ui-listview ui-virtuallistview"></ul>
+    <div class="ui-content">
+      <ul id="projects-list" class="ui-listview ui-virtuallistview"><li></li></ul>
+    </div>
+
   </div>
 
   <script id="todolist-item" type="text">

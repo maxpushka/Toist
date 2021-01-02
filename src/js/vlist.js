@@ -71,7 +71,7 @@ const SVG = {
 }
 
 function parser(pattern, field, data) {
-	// console.log("newIndex:", data, field);
+	console.log("newIndex data:", data, "field: ", field);
 	let obj = data;
 	field.split('.').forEach( (i) => {obj = obj[i];} );
 

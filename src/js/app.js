@@ -29,13 +29,14 @@ function update(type) {
 
       const todolist_items = JSON.parse(localStorage.getItem("items")); // string from local storage -> json
       const inbox = todolist_items.filter(i => i.project_id == "2251947170"); // Inbox project
-      let inbox_page = Array.from(document.getElementsByClassName("ui-page")).filter(i => i.id == "main")[0];
-      inbox_page.dispatchEvent( new CustomEvent("draw-vlist-main", {detail: {"JSON_DATA": inbox}}) );
       console.log("inbox: ", inbox);
+      let inbox_page = Array.from(document.getElementsByClassName("ui-page")).filter(i => i.id == "main")[0];
+      inbox_page.dispatchEvent( new CustomEvent(`draw-vlist-${inbox_page.id}`, {detail: {"JSON_DATA": inbox}}) );
 
       const projects = JSON.parse(localStorage.getItem("projects"));
+      console.log(projects);
       const projects_page = Array.from(document.getElementsByClassName("ui-page")).filter(i => i.id == "projects-page")[0];
-      projects_page.dispatchEvent( new CustomEvent("draw-vlist-main", {detail: {"JSON_DATA": projects}}) );
+      projects_page.dispatchEvent( new CustomEvent(`draw-vlist-${projects_page.id}`, {detail: {"JSON_DATA": projects}}) );
     })
     .catch( error => {
       console.log("Error: " + String(error));
