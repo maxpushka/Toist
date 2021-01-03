@@ -44,8 +44,8 @@
 				}
 			});
 
-			virtualListWidget.draw();
 			console.log("created");
+			virtualListWidget.draw();
 		});
 
 		// Destroys and removes event listeners
@@ -61,6 +61,7 @@
 			page.dispatchEvent( new CustomEvent(`draw-vlist-${pageId}`, {detail: {"JSON_DATA":event.detail.JSON_DATA}}) );
 			console.log("updated");
 		});
+
 	});
 
 	console.log("vlist event listeners created");
@@ -71,7 +72,7 @@ const SVG = {
 }
 
 function parser(pattern, field, data) {
-	console.log("newIndex data:", data, "field: ", field);
+	// console.log("newIndex data:", data, "field: ", field);
 	let obj = data;
 	field.split('.').forEach( (i) => {obj = obj[i];} );
 
