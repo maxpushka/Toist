@@ -1,67 +1,110 @@
+// Setting up objects for all extant vlists
+const pagesList = document.getElementsByClassName("ui-page");
+let mainPageObj = new function() {
+	this.page = pagesList["main"];
+	this.pageId = this.page.id;
+	this.listElement = document.getElementById(this.page.dataset.listId);
+	this.template = document.getElementById(this.page.dataset.templateId).innerHTML;
+	this.itemClass = JSON.parse(this.page.dataset.itemClass);
+	this.virtualListWidget = null;
+	this.listHelper = null;
+	this.JSON_DATA = function () {
+		const inboxProjectId = JSON.parse(localStorage.getItem("projects"))["0"].id;
+		const todolistItems = JSON.parse(localStorage.getItem("items"));
+		const inbox = todolistItems.filter(i => i.project_id == inboxProjectId);
+		// console.log("inbox items:", inbox);
+		return inbox;
+	};
+};
+let projectsPageObj = new function() {
+	this.page = pagesList["projects-page"];
+	this.pageId = this.page.id;
+	this.listElement = document.getElementById(this.page.dataset.listId);
+	this.template = document.getElementById(this.page.dataset.templateId).innerHTML;
+	this.itemClass = JSON.parse(this.page.dataset.itemClass);
+	this.virtualListWidget = null;
+	this.listHelper = null;
+	this.JSON_DATA = function () {
+		const projectsList = JSON.parse(localStorage.getItem("projects"));
+		// console.log( "project list:", projectsList );
+		return projectsList;
+	}
+};
+const vlistCollection = [mainPageObj, projectsPageObj];
+
 /* VIRTUAL LIST LOGIC */
-(function (pageId, listId, templateId, itemClass) {
-	"use strict"
-	let pageElement = document.getElementById(pageId),
-		listElement = document.getElementById(listId),
-		virtualListWidget,
-		listHelper;
+(function (vlistCollection) {
+	"use strict";
 
-	// Do preparatory works and adds event listeners
-	pageElement.addEventListener("draw-vlist", function (event) {
-		/* Get HTML element reference */
-		let template = document.getElementById(templateId).innerHTML,
-			JSON_DATA = event.detail.JSON_DATA,
-			options = {
-				dataLength: JSON_DATA.length,
-				bufferSize: 50
-			};
-		if (pageElement.classList.contains("page-snaplistview")) {
-			options.snap = {animate: "scale"};
-		}
+	vlistCollection.forEach( (pageObj) => {
 
-		virtualListWidget = tau.widget.Listview(listElement, options);
+		console.log(pageObj.pageId, pageObj.page.dataset.listId, pageObj.page.dataset.templateId, pageObj.page.dataset.itemClass);
 
-		/* Update list items */
-		virtualListWidget.setListItemUpdater(function (li, newIndex) {
-			let data = JSON_DATA[newIndex];
-
-			li.innerHTML = template.replace(/\$\{([\w.]+)\}/ig,
-				(pattern, field) => parser(pattern, field, data) );
-
-			if (itemClass.length) {
-				itemClass.forEach(function (value) {
-					li.classList.add(value);
-				});
+		// Do preparatory works and adds event listeners
+		pageObj.page.addEventListener(`pagebeforeshow`, function () {
+			/* Get HTML element reference */
+			const JSON_DATA = pageObj.JSON_DATA(),
+				options = {
+					dataLength: JSON_DATA.length,
+					bufferSize: 100
+				};
+			if (pageObj.page.classList.contains("page-snaplistview")) {
+				options.snap = {animate: "scale"};
 			}
+
+			pageObj.virtualListWidget = tau.widget.Listview(pageObj.listElement, options);
+
+			/* Update list items */
+			pageObj.virtualListWidget.setListItemUpdater(function (li, newIndex) {
+				let data = JSON_DATA[newIndex];
+
+				li.innerHTML = pageObj.template.replace(/\$\{([\w.]+)\}/ig,
+					(pattern, field) => parser(pattern, field, data) );
+
+				if (pageObj.itemClass.length) {
+					pageObj.itemClass.forEach(function (value) {
+						li.classList.add(value);
+					});
+				}
+			});
+
+			console.log("created");
+			console.log("virtualListWidget in draw:", pageObj.virtualListWidget);
+			pageObj.virtualListWidget.draw();
 		});
 
-		virtualListWidget.draw();
-		console.log("created");
+		// Destroys and removes event listeners
+		console.log("virtualListWidget before destroy:", pageObj.virtualListWidget);
+		pageObj.page.addEventListener(`pagehide`, function (pageObj) {
+			console.log("virtualListWidget in destroy:", pageObj.virtualListWidget);
+			pageObj.virtualListWidget.destroy; // remove all children in the virtual list
+			if (pageObj.listHelper) pageObj.listHelper.destroy();
+			console.log("destroyed");
+		});
+
+		pageObj.page.addEventListener("update-vlist", function () {
+			pageObj.page.dispatchEvent( new Event("pagehide") );
+			pageObj.page.dispatchEvent( new Event("pagebeforeshow") );
+		});
+
 	});
 
-	// Destroys and removes event listeners
-	pageElement.addEventListener("destroy-vlist", function () {
-		virtualListWidget.destroy(); // remove all children in the virtual list
-		if (listHelper) listHelper.destroy();
-		console.log("destroyed");
-	});
+	const SVG = {
+		recurring: `<svg width="24" height="24" viewBox="0 0 12 12" class="recurring_icon"><path fill="currentColor" d="M2.784 4.589l.07.057 1.5 1.5a.5.5 0 01-.638.765l-.07-.057L3 6.207V7a2 2 0 001.85 1.995L5 9h2.5a.5.5 0 01.09.992L7.5 10H5a3 3 0 01-2.995-2.824L2 7v-.793l-.646.647a.5.5 0 01-.638.057l-.07-.057a.5.5 0 01-.057-.638l.057-.07 1.5-1.5a.5.5 0 01.638-.057zM7 2a3 3 0 013 3v.792l.646-.646a.5.5 0 01.765.638l-.057.07-1.5 1.5a.5.5 0 01-.638.057l-.07-.057-1.5-1.5a.5.5 0 01.638-.765l.07.057.646.646V5a2 2 0 00-1.85-1.995L7 3H4.5a.5.5 0 010-1z"></path></svg>`,
+	}
 
-	pageElement.addEventListener("update-vlist", function (event) {
-		pageElement.dispatchEvent( new CustomEvent("destroy-vlist") );
-		pageElement.dispatchEvent( new CustomEvent("draw-vlist", {detail: {"JSON_DATA":event.detail.JSON_DATA}}) );
-		console.log("updated");
-	});
-})(pageId, listId, templateId, itemClass);
+	function parser(pattern, field, data) {
+		// console.log("newIndex data:", data, "field: ", field);
+		let obj = data;
+		field.split('.').forEach( (i) => {obj = obj[i];} );
+	
+		if (field === "due.is_recurring") {
+			if (obj == true) return SVG.recurring;
+			else return '';
+		}
+		else return obj;
+	}
 
-const SVG = {
-	recurring: `<svg width="24" height="24" viewBox="0 0 12 12" class="recurring_icon"><path fill="currentColor" d="M2.784 4.589l.07.057 1.5 1.5a.5.5 0 01-.638.765l-.07-.057L3 6.207V7a2 2 0 001.85 1.995L5 9h2.5a.5.5 0 01.09.992L7.5 10H5a3 3 0 01-2.995-2.824L2 7v-.793l-.646.647a.5.5 0 01-.638.057l-.07-.057a.5.5 0 01-.057-.638l.057-.07 1.5-1.5a.5.5 0 01.638-.057zM7 2a3 3 0 013 3v.792l.646-.646a.5.5 0 01.765.638l-.057.07-1.5 1.5a.5.5 0 01-.638.057l-.07-.057-1.5-1.5a.5.5 0 01.638-.765l.07.057.646.646V5a2 2 0 00-1.85-1.995L7 3H4.5a.5.5 0 010-1z"></path></svg>`,
-}
+	console.log("vlist event listeners created");
+}(vlistCollection));
 
-function parser(pattern, field, data) {
-	// console.log("newIndex:", data, field);
-	let obj = data;
-	field.split('.').forEach( (i) => {obj = obj[i];} );
-
-	if (field === "due.is_recurring" && obj == true) {return SVG.recurring;}
-	else {return obj;}
-}
