@@ -20,10 +20,11 @@ function update(type) {
   const fetchURL = `${SYNC_URL}?token=${TOKEN}&${type}`;
 
 	/* Create processing element */
-	let processingEl = document.createElement("div");
+	const processingEl = document.createElement("div");
 	processingEl.setAttribute("class", "ui-processing ui-processing-full-size");
   processingEl.setAttribute("id", "processing");
-  document.getElementsByTagName("body")[0].append(processingEl);
+  const activePage = document.getElementsByClassName("ui-page-active")[0];
+  activePage.append(processingEl);
 
   /* Get chatlist data from server */
   fetch(fetchURL)
@@ -44,6 +45,8 @@ function update(type) {
       console.log("Error: " + String(error));
       tau.openPopup("#failed-update");
     })
+    .then( () => activePage.dispatchEvent(new CustomEvent("update-vlist")) )
+    .catch( error => console.log("Virtual List update error: " + String(error)) )
     /* Remove processing element */
     .finally( () => {processingEl.remove();} );
 

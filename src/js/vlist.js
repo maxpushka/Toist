@@ -8,11 +8,11 @@ let mainPageObj = new function() {
 	this.itemClass = JSON.parse(this.page.dataset.itemClass);
 	this.virtualListWidget = null;
 	this.listHelper = null;
-	this.JSON_DATA = new function () {
+	this.JSON_DATA = function () {
 		const inboxProjectId = JSON.parse(localStorage.getItem("projects"))["0"].id;
 		const todolistItems = JSON.parse(localStorage.getItem("items"));
 		const inbox = todolistItems.filter(i => i.project_id == inboxProjectId);
-		console.log("inbox items:", inbox);
+		// console.log("inbox items:", inbox);
 		return inbox;
 	};
 };
@@ -24,9 +24,9 @@ let projectsPageObj = new function() {
 	this.itemClass = JSON.parse(this.page.dataset.itemClass);
 	this.virtualListWidget = null;
 	this.listHelper = null;
-	this.JSON_DATA = new function () {
+	this.JSON_DATA = function () {
 		const projectsList = JSON.parse(localStorage.getItem("projects"));
-		console.log( "project list:", projectsList );
+		// console.log( "project list:", projectsList );
 		return projectsList;
 	}
 };
@@ -41,9 +41,9 @@ const vlistCollection = [mainPageObj, projectsPageObj];
 		console.log(pageObj.pageId, pageObj.page.dataset.listId, pageObj.page.dataset.templateId, pageObj.page.dataset.itemClass);
 
 		// Do preparatory works and adds event listeners
-		pageObj.page.addEventListener(`pagebeforeshow`, function () { // draw-vlist-${pageObj.pageId}
+		pageObj.page.addEventListener(`pagebeforeshow`, function () {
 			/* Get HTML element reference */
-			const JSON_DATA = pageObj.JSON_DATA,
+			const JSON_DATA = pageObj.JSON_DATA(),
 				options = {
 					dataLength: JSON_DATA.length,
 					bufferSize: 100
@@ -75,18 +75,16 @@ const vlistCollection = [mainPageObj, projectsPageObj];
 
 		// Destroys and removes event listeners
 		console.log("virtualListWidget before destroy:", pageObj.virtualListWidget);
-		pageObj.page.addEventListener(`pagehide`, function (pageObj) { //destroy-vlist-${pageObj.pageId}
+		pageObj.page.addEventListener(`pagehide`, function (pageObj) {
 			console.log("virtualListWidget in destroy:", pageObj.virtualListWidget);
 			pageObj.virtualListWidget.destroy; // remove all children in the virtual list
 			if (pageObj.listHelper) pageObj.listHelper.destroy();
 			console.log("destroyed");
 		});
 
-		pageObj.page.addEventListener(`update-vlist-${pageObj.pageId}`, function (event) {
-			console.log("updating page: ", pageObj.pageId);
-			pageObj.page.dispatchEvent( new CustomEvent(`destroy-vlist-${pageObj.pageId}`) );
-			pageObj.page.dispatchEvent( new CustomEvent(`draw-vlist-${pageObj.pageId}`, {detail: {"JSON_DATA":event.detail.JSON_DATA}}) );
-			console.log("updated");
+		pageObj.page.addEventListener("update-vlist", function () {
+			pageObj.page.dispatchEvent( new Event("pagehide") );
+			pageObj.page.dispatchEvent( new Event("pagebeforeshow") );
 		});
 
 	});
@@ -109,3 +107,4 @@ const vlistCollection = [mainPageObj, projectsPageObj];
 
 	console.log("vlist event listeners created");
 }(vlistCollection));
+
