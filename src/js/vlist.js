@@ -30,14 +30,13 @@ let projectsPageObj = new function() {
 		return projectsList;
 	}
 };
+const vlistCollection = [mainPageObj, projectsPageObj];
 
 /* VIRTUAL LIST LOGIC */
-(function () {
+(function (vlistCollection) {
 	"use strict";
 
-	//-------------------------------------------------------------------------//
-
-	[mainPageObj, projectsPageObj].forEach( (pageObj) => {
+	vlistCollection.forEach( (pageObj) => {
 
 		console.log(pageObj.pageId, pageObj.page.dataset.listId, pageObj.page.dataset.templateId, pageObj.page.dataset.itemClass);
 
@@ -109,4 +108,4 @@ let projectsPageObj = new function() {
 	}
 
 	console.log("vlist event listeners created");
-}());
+}(vlistCollection));

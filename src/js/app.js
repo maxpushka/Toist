@@ -39,7 +39,6 @@ function update(type) {
       for (let key in json) {
         localStorage.setItem( key, JSON.stringify(json[key]) );
       }
-      vlistController("update");
     })
     .catch( error => {
       console.log("Error: " + String(error));
@@ -50,5 +49,4 @@ function update(type) {
 
 }
 
-// vlistController("draw");
 update(FULL_SYNC);
