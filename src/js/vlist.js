@@ -1,36 +1,50 @@
+// Setting up objects for all extant vlists
+const pagesList = document.getElementsByClassName("ui-page");
+let mainPageObj = new function() {
+	this.page = pagesList["main"];
+	this.pageId = this.page.id;
+	this.listElement = document.getElementById(this.page.dataset.listId);
+	this.template = document.getElementById(this.page.dataset.templateId).innerHTML;
+	this.itemClass = JSON.parse(this.page.dataset.itemClass);
+	this.virtualListWidget = null;
+	this.listHelper = null;
+	this.JSON_DATA = new function () {
+		const inboxProjectId = JSON.parse(localStorage.getItem("projects"))["0"].id;
+		const todolistItems = JSON.parse(localStorage.getItem("items"));
+		const inbox = todolistItems.filter(i => i.project_id == inboxProjectId);
+		console.log("inbox items:", inbox);
+		return inbox;
+	};
+};
+let projectsPageObj = new function() {
+	this.page = pagesList["projects-page"];
+	this.pageId = this.page.id;
+	this.listElement = document.getElementById(this.page.dataset.listId);
+	this.template = document.getElementById(this.page.dataset.templateId).innerHTML;
+	this.itemClass = JSON.parse(this.page.dataset.itemClass);
+	this.virtualListWidget = null;
+	this.listHelper = null;
+	this.JSON_DATA = new function () {
+		const projectsList = JSON.parse(localStorage.getItem("projects"));
+		console.log( "project list:", projectsList );
+		return projectsList;
+	}
+};
+
 /* VIRTUAL LIST LOGIC */
 (function () {
-	"use strict"
-	const pagesList = document.getElementsByClassName("ui-page");
+	"use strict";
 
-	let mainPageObj = new function() {
-		this.page = pagesList["main"];
-		this.pageId = this.page.id;
-		this.listElement = document.getElementById(this.page.dataset.listId);
-		this.template = document.getElementById(this.page.dataset.templateId).innerHTML;
-		this.itemClass = JSON.parse(this.page.dataset.itemClass);
-		this.virtualListWidget;
-		this.listHelper;
-	};
-	
-	let projectsPageObj = new function() {
-		this.page = pagesList["projects-page"];
-		this.pageId = this.page.id;
-		this.listElement = document.getElementById(this.page.dataset.listId);
-		this.template = document.getElementById(this.page.dataset.templateId).innerHTML;
-		this.itemClass = JSON.parse(this.page.dataset.itemClass);
-		this.virtualListWidget;
-		this.listHelper;
-	};
+	//-------------------------------------------------------------------------//
 
 	[mainPageObj, projectsPageObj].forEach( (pageObj) => {
 
 		console.log(pageObj.pageId, pageObj.page.dataset.listId, pageObj.page.dataset.templateId, pageObj.page.dataset.itemClass);
 
 		// Do preparatory works and adds event listeners
-		pageObj.page.addEventListener(`draw-vlist-${pageObj.pageId}`, function (event) {
+		pageObj.page.addEventListener(`pagebeforeshow`, function () { // draw-vlist-${pageObj.pageId}
 			/* Get HTML element reference */
-			const JSON_DATA = event.detail.JSON_DATA,
+			const JSON_DATA = pageObj.JSON_DATA,
 				options = {
 					dataLength: JSON_DATA.length,
 					bufferSize: 100
@@ -39,7 +53,7 @@
 				options.snap = {animate: "scale"};
 			}
 
-			pageObj.virtualListWidget = tau.widget.Listview(listElement, options);
+			pageObj.virtualListWidget = tau.widget.Listview(pageObj.listElement, options);
 
 			/* Update list items */
 			pageObj.virtualListWidget.setListItemUpdater(function (li, newIndex) {
@@ -56,12 +70,15 @@
 			});
 
 			console.log("created");
+			console.log("virtualListWidget in draw:", pageObj.virtualListWidget);
 			pageObj.virtualListWidget.draw();
 		});
 
 		// Destroys and removes event listeners
-		pageObj.page.addEventListener(`destroy-vlist-${pageObj.pageId}`, function () {
-			pageObj.virtualListWidget.destroy(); // remove all children in the virtual list
+		console.log("virtualListWidget before destroy:", pageObj.virtualListWidget);
+		pageObj.page.addEventListener(`pagehide`, function (pageObj) { //destroy-vlist-${pageObj.pageId}
+			console.log("virtualListWidget in destroy:", pageObj.virtualListWidget);
+			pageObj.virtualListWidget.destroy; // remove all children in the virtual list
 			if (pageObj.listHelper) pageObj.listHelper.destroy();
 			console.log("destroyed");
 		});
@@ -75,18 +92,21 @@
 
 	});
 
+	const SVG = {
+		recurring: `<svg width="24" height="24" viewBox="0 0 12 12" class="recurring_icon"><path fill="currentColor" d="M2.784 4.589l.07.057 1.5 1.5a.5.5 0 01-.638.765l-.07-.057L3 6.207V7a2 2 0 001.85 1.995L5 9h2.5a.5.5 0 01.09.992L7.5 10H5a3 3 0 01-2.995-2.824L2 7v-.793l-.646.647a.5.5 0 01-.638.057l-.07-.057a.5.5 0 01-.057-.638l.057-.07 1.5-1.5a.5.5 0 01.638-.057zM7 2a3 3 0 013 3v.792l.646-.646a.5.5 0 01.765.638l-.057.07-1.5 1.5a.5.5 0 01-.638.057l-.07-.057-1.5-1.5a.5.5 0 01.638-.765l.07.057.646.646V5a2 2 0 00-1.85-1.995L7 3H4.5a.5.5 0 010-1z"></path></svg>`,
+	}
+
 	function parser(pattern, field, data) {
 		// console.log("newIndex data:", data, "field: ", field);
 		let obj = data;
 		field.split('.').forEach( (i) => {obj = obj[i];} );
 	
-		if (field === "due.is_recurring" && obj == true) {return SVG.recurring;}
-		else {return obj;}
+		if (field === "due.is_recurring") {
+			if (obj == true) return SVG.recurring;
+			else return '';
+		}
+		else return obj;
 	}
 
 	console.log("vlist event listeners created");
-})();
-
-const SVG = {
-	recurring: `<svg width="24" height="24" viewBox="0 0 12 12" class="recurring_icon"><path fill="currentColor" d="M2.784 4.589l.07.057 1.5 1.5a.5.5 0 01-.638.765l-.07-.057L3 6.207V7a2 2 0 001.85 1.995L5 9h2.5a.5.5 0 01.09.992L7.5 10H5a3 3 0 01-2.995-2.824L2 7v-.793l-.646.647a.5.5 0 01-.638.057l-.07-.057a.5.5 0 01-.057-.638l.057-.07 1.5-1.5a.5.5 0 01.638-.057zM7 2a3 3 0 013 3v.792l.646-.646a.5.5 0 01.765.638l-.057.07-1.5 1.5a.5.5 0 01-.638.057l-.07-.057-1.5-1.5a.5.5 0 01.638-.765l.07.057.646.646V5a2 2 0 00-1.85-1.995L7 3H4.5a.5.5 0 010-1z"></path></svg>`,
-}
+}());

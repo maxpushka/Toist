@@ -28,24 +28,18 @@ function update(type) {
   /* Get chatlist data from server */
   fetch(fetchURL)
     .then( response => {
-      for (let [key, value] of response.headers) {
-        console.log(`${key} = ${value}`);
-      }
-      return response.json();
+      console.log("response.status: ", response.status);
+      if (response.status == 200) {
+         console.log(200);
+        return response.json();}
+      throw `${response.status} error`;
     })
     .then( json => {
       console.log("received json: ", json);
       for (let key in json) {
         localStorage.setItem( key, JSON.stringify(json[key]) );
       }
-
-      const todolist_items = JSON.parse(localStorage.getItem("items")); // string from local storage -> json
-      const inbox = todolist_items.filter(i => i.project_id == "2251947170"); // Inbox project
-      const inbox_page = Array.from(document.getElementsByClassName("ui-page")).filter(i => i.id == "main")[0];
-      console.log("inbox_page", inbox_page);
-      inbox_page.dispatchEvent( new CustomEvent(`update-vlist-${inbox_page.id}`, {detail: {"JSON_DATA": inbox}}) );
-      console.log("inbox: ", inbox);
-
+      vlistController("update");
     })
     .catch( error => {
       console.log("Error: " + String(error));
@@ -56,12 +50,5 @@ function update(type) {
 
 }
 
-function loadProjects() {
-  const projects = JSON.parse(localStorage.getItem("projects"));
-  const projects_page = Array.from(document.getElementsByClassName("ui-page")).filter(i => i.id == "projects-page")[0];
-  console.log(projects_page.id);
-  projects_page.dispatchEvent( new CustomEvent(`draw-vlist-${projects_page.id}`, {detail: {"JSON_DATA": projects}}) );
-  console.log("projects: ", projects);
-} 
-
+// vlistController("draw");
 update(FULL_SYNC);
