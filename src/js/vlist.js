@@ -9,12 +9,13 @@ let mainPageObj = new function() {
 	this.virtualListWidget = null;
 	this.listHelper = null;
 	this.JSON_DATA = function () {
-		const inboxProjectId = JSON.parse(localStorage.getItem("projects"))["0"].id;
-		const todolistItems = JSON.parse(localStorage.getItem("items"));
-		const inbox = todolistItems.filter(i => i.project_id == inboxProjectId);
-		// console.log("inbox items:", inbox);
-		return inbox;
+		const query = document.getElementsByClassName("ui-page-active")[0].dataset.displayedPage;
+		const items = JSON.parse(localStorage.getItem("items"));
+
+		const inboxProjectId = JSON.parse(localStorage.getItem("user"))["inbox_project"];
+		return items.filter(i => i.project_id == inboxProjectId);
 	};
+	this.JSON_FLEX = function () {};
 };
 let projectsPageObj = new function() {
 	this.page = pagesList["projects-page"];
@@ -24,11 +25,7 @@ let projectsPageObj = new function() {
 	this.itemClass = JSON.parse(this.page.dataset.itemClass);
 	this.virtualListWidget = null;
 	this.listHelper = null;
-	this.JSON_DATA = function () {
-		const projectsList = JSON.parse(localStorage.getItem("projects"));
-		// console.log( "project list:", projectsList );
-		return projectsList;
-	}
+	this.JSON_DATA = function () {return JSON.parse(localStorage.getItem("projects"));}
 };
 const vlistCollection = [mainPageObj, projectsPageObj];
 

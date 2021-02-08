@@ -4,6 +4,17 @@ const SYNC_URL = 'https://api.todoist.com/sync/v8/sync';
 const TOKEN = '2ab5e4aaeafd1caa19c5cc2464f7ae12341a05f1';
 const FULL_SYNC = 'sync_token=*&resource_types=[%22all%22]';
 
+/* set dafault view */
+setStartPage();
+function setStartPage() {
+  try {
+    const startPage = JSON.parse(localStorage.getItem("user"))["start_page"];
+    document.getElementById("main").dataset.displayedPage = startPage;
+  } catch (error) {
+    console.log(`Error: couldn't set start page (${error})`);
+  }
+}
+
 function color(num) {
   // returns color of a project
   const colors = [
@@ -45,7 +56,10 @@ function update(type) {
       console.log("Error: " + String(error));
       tau.openPopup("#failed-update");
     })
-    .then( () => activePage.dispatchEvent(new CustomEvent("update-vlist")) )
+    .then( () => {
+      setStartPage();
+      activePage.dispatchEvent(new CustomEvent("update-vlist"));
+    })
     .catch( error => console.log("Virtual List update error: " + String(error)) )
     /* Remove processing element */
     .finally( () => {processingEl.remove();} );
